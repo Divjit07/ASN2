@@ -44,16 +44,20 @@ app.set("view engine", "hbs");
 app.set("views", path.join(process.cwd(), "views"));
 
 // ===== LOAD JSON DATA (ASYNC + VERCEL SAFE) =====
-let airbnbData = [];
+let cachedData = null;
 
-async function loadData() {
+async function getData() {
+  if (cachedData) {
+    return cachedData;
+  }
+
   try {
     const filePath = path.join(process.cwd(), "data", "airbnb_small.json");
     const raw = await fs.promises.readFile(filePath, "utf8");
     const json = JSON.parse(raw);
 
     // Normalize keys
-    const normalized = json.map(item => ({
+    cachedData = json.map(item => ({
       id: item.id,
       name: item.NAME,
       host_id: item["host id"],
@@ -82,20 +86,12 @@ async function loadData() {
       cancellation_policy: item.cancellation_policy
     }));
 
-    console.log("Loaded dataset:", normalized.length, "records");
-    return normalized;
+    console.log("Loaded dataset:", cachedData.length, "records");
+    return cachedData;
   } catch (err) {
     console.error("JSON load error:", err);
     return [];
   }
-}
-
-// Load once on cold start (Vercel behavior)
-// NOTE: For local dev, we load before listen. For Vercel, this might still be needed if it exports app without listening.
-if (process.env.VERCEL) {
-  loadData().then(data => {
-    airbnbData = data;
-  });
 }
 
 // ===== ROUTES =====
@@ -125,14 +121,15 @@ app.get("/search/id", (req, res) => {
 app.post(
   "/search/id",
   body("propertyId").notEmpty().withMessage("Property ID is required").trim().escape(),
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.render("searchByID", { title: "Search by Property ID", errors: errors.array() });
     }
 
+    const data = await getData();
     const id = req.body.propertyId;
-    const record = airbnbData.find(i => String(i.id) === id);
+    const record = data.find(i => String(i.id) === id);
 
     if (!record) {
       return res.render("searchByID", { title: "Search by Property ID", notFound: true });
@@ -150,14 +147,15 @@ app.get("/search/name", (req, res) => {
 app.post(
   "/search/name",
   body("propertyName").notEmpty().withMessage("Property Name is required").trim().escape(),
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.render("searchByName", { title: "Search by Property Name", errors: errors.array() });
     }
 
+    const data = await getData();
     const search = req.body.propertyName.toLowerCase();
-    const results = airbnbData.filter(
+    const results = data.filter(
       i => i.name && i.name.toLowerCase().includes(search)
     );
 
@@ -166,19 +164,21 @@ app.post(
 );
 
 // ===== STEP 8 – VIEW DATA =====
-app.get("/viewData", (req, res) => {
-  console.log("Accessing /viewData. Records available:", airbnbData.length);
+app.get("/viewData", async (req, res) => {
+  const data = await getData();
+  console.log("Accessing /viewData. Records available:", data.length);
   res.render("viewData", {
     title: "View All Airbnb Data",
-    records: airbnbData.slice(0, 100) // VERCEL SAFE
+    records: data.slice(0, 100) // VERCEL SAFE
   });
 });
 
 // ===== STEP 9 – CLEAN VIEW =====
-app.get("/viewData/clean", (req, res) => {
+app.get("/viewData/clean", async (req, res) => {
+  const data = await getData();
   res.render("viewDataClean", {
     title: "View Clean Airbnb Data",
-    records: airbnbData.slice(0, 100)
+    records: data.slice(0, 100)
   });
 });
 
@@ -191,7 +191,7 @@ app.post(
   "/viewData/price",
   body("minPrice").notEmpty().isNumeric().withMessage("Minimum price must be numeric"),
   body("maxPrice").notEmpty().isNumeric().withMessage("Maximum price must be numeric"),
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.render("viewDataPrice", { title: "Search by Price Range", errors: errors.array() });
@@ -199,8 +199,9 @@ app.post(
 
     const min = Number(req.body.minPrice);
     const max = Number(req.body.maxPrice);
+    const data = await getData();
 
-    const filtered = airbnbData.filter(item => {
+    const filtered = data.filter(item => {
       if (!item.price) return false;
       const p = Number(String(item.price).replace(/[^0-9.-]/g, ""));
       return p >= min && p <= max;
@@ -224,15 +225,7 @@ module.exports = app;
 // ===== LOCAL SERVER =====
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
-
-  // Wait for data to load before starting server
-  loadData().then(data => {
-    airbnbData = data;
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
-      console.log(`Data loaded successfully: ${airbnbData.length} records`);
-    });
-  }).catch(err => {
-    console.error("Failed to load data on startup:", err);
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
   });
 }
