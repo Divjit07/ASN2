@@ -226,6 +226,35 @@ app.post(
   }
 );
 
+// ===== DEBUG ROUTE =====
+app.get("/debug", async (req, res) => {
+  const dataDir = path.join(process.cwd(), "data");
+  let files = [];
+  try {
+    files = await fs.promises.readdir(dataDir);
+  } catch (e) {
+    files = ["Error reading dir: " + e.message];
+  }
+
+  const filePath = path.join(dataDir, "airbnb_small.json");
+  let fileStats = "File not found";
+  try {
+    const stats = await fs.promises.stat(filePath);
+    fileStats = `Size: ${stats.size} bytes`;
+  } catch (e) {
+    fileStats = e.message;
+  }
+
+  res.send(`
+    <h1>Debug Info</h1>
+    <p>CWD: ${process.cwd()}</p>
+    <p>Data Dir: ${dataDir}</p>
+    <p>Files in Data Dir: ${JSON.stringify(files)}</p>
+    <p>airbnb_small.json Stats: ${fileStats}</p>
+    <p>Cached Data Length: ${cachedData ? cachedData.length : "null"}</p>
+  `);
+});
+
 // ===== 404 =====
 app.get("*", (req, res) => {
   res.render("error", { title: "Error", message: "Wrong Route" });
