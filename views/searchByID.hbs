@@ -1,0 +1,17 @@
+<form method="POST" action="/search/id">
+  <label>Property ID:</label>
+  <input type="text" name="propertyId" placeholder="e.g. 1001254">
+  <button type="submit">Search</button>
+</form>
+
+{{#if errors}}
+  <ul>
+    {{#each errors}}
+      <li style="color:red;">{{this.msg}}</li>
+    {{/each}}
+  </ul>
+{{/if}}
+
+{{#if notFound}}
+  <p style="color:red;">Property not found</p>
+{{/if}}

@@ -1,0 +1,132 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f8f9fb 0%, #e4ebf1 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  color: #333;
+  line-height: 1.6;
+  padding-top: 40px;
+}
+
+header, main, footer {
+  width: 85%;
+  max-width: 700px;
+  background-color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+header:hover, main:hover, footer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 28px;
+  background-color: #fafafa;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+header h1, header h2 {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #222;
+}
+
+header h1 i, header h2 i {
+  color: #0077b6;
+  font-style: normal;
+}
+
+body > div, body > section, body > main {
+  background-color: #fff;
+  padding: 28px;
+  width: 85%;
+  max-width: 700px;
+  margin-top: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+h3, h4, p {
+  margin-bottom: 12px;
+}
+
+a {
+  color: #0077b6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+footer {
+  text-align: center;
+  margin-top: 10px;
+  padding: 15px;
+  background-color: #fafafa;
+  border-top: 2px solid #f0f0f0;
+}
+
+footer p {
+  font-size: 0.9rem;
+  color: #555;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    text-align: center;
+    gap: 6px;
+  }
+}
+
+/* Navigation Buttons */
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #0077b6;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 119, 182, 0.2);
+}
+
+.btn:hover {
+  background-color: #005f92;
+  transform: translateY(-2px);
+  text-decoration: none;
+  box-shadow: 0 6px 12px rgba(0, 119, 182, 0.3);
+}
+
+.welcome-msg {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 30px;
+}

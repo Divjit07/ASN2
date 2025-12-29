@@ -1,0 +1,36 @@
+<h2>{{title}}</h2>
+
+<form method="POST" action="/search/name" style="margin-bottom:20px;">
+  <label for="property_name">Property Name:</label>
+  <input type="text" name="propertyName" id="property_name" placeholder="e.g. Park View">
+  <button type="submit">Search</button>
+</form>
+
+{{#if errors}}
+<ul style="color:red;">
+  {{#each errors}}
+  <li>{{this.msg}}</li>
+  {{/each}}
+</ul>
+{{/if}}
+
+{{#if results.length}}
+<ul style="list-style:none; padding:0;">
+  {{#each results}}
+  <li style="margin-bottom:20px; border:1px solid #ddd; padding:10px; border-radius:8px;">
+    <strong style="font-size:18px;">{{this.name}}</strong> (ID: {{this.id}})
+    <br>Neighbourhood: {{this.neighbourhood}}
+    <br>Room Type: {{this.room_type}}
+    <br>Price: {{this.price}}
+    <br>Host: {{this.host_name}}
+
+    {{#if this.thumbnail}}
+    <br>
+    <img src="{{this.thumbnail}}" alt="Property Image" style="max-width:250px;border-radius:8px;margin-top:8px;">
+    {{/if}}
+  </li>
+  {{/each}}
+</ul>
+{{else}}
+<p>No results found.</p>
+{{/if}}

@@ -1,0 +1,59 @@
+<h2 style="text-align:center;">{{title}}</h2>
+
+<form method="POST" action="/viewData/price" style="text-align:center; margin-bottom:20px;">
+  <label for="minPrice">Min Price:</label>
+  <input type="text" name="minPrice" id="minPrice" placeholder="e.g. 100">
+  
+  <label for="maxPrice">Max Price:</label>
+  <input type="text" name="maxPrice" id="maxPrice" placeholder="e.g. 500">
+  
+  <button type="submit">Search</button>
+</form>
+
+{{#if errors}}
+  <ul style="color:red; text-align:center;">
+    {{#each errors}}
+      <li>{{this.msg}}</li>
+    {{/each}}
+  </ul>
+{{/if}}
+
+{{#if results}}
+  {{#if results.length}}
+  <div style="display:flex; justify-content:center;">
+    <table border="1" cellspacing="0" cellpadding="8"
+           style="border-collapse: collapse; width: 90%; max-width: 1000px; text-align: center;">
+      <thead style="background-color:#f0f0f0;">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Neighbourhood</th>
+          <th>Price</th>
+          <th>Room Type</th>
+          <th>Host</th>
+          <th>Thumbnail</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each results}}
+        <tr>
+          <td>{{this.id}}</td>
+          <td>{{displayName this.name}}</td>        <!-- FIXED -->
+          <td>{{this.neighbourhood}}</td>
+          <td>{{this.price}}</td>
+          <td>{{this.room_type}}</td>               <!-- FIXED -->
+          <td>{{this.host_name}}</td>               <!-- FIXED -->
+          <td>
+            {{#if this.thumbnail}}
+              <img src="{{this.thumbnail}}" alt="Property Image" style="max-width:100px; border-radius:5px;">
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+    <p style="text-align:center;">No properties found in this price range.</p>
+  {{/if}}
+{{/if}}

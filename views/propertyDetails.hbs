@@ -1,0 +1,16 @@
+<h2>{{title}}</h2>
+
+<div style="border:1px solid #ddd; padding:15px; border-radius:10px; max-width:500px;">
+  <p><strong>ID:</strong> {{record.id}}</p>
+  <p><strong>Name:</strong> {{record.name}}</p>
+  <p><strong>Neighbourhood:</strong> {{record.neighbourhood}}</p>
+  <p><strong>Price:</strong> {{record.price}}</p>
+  <p><strong>Room Type:</strong> {{record.room_type}}</p>
+  <p><strong>Host:</strong> {{record.host_name}}</p>
+  <p><strong>Cancellation Policy:</strong> {{record.cancellation_policy}}</p>
+
+  {{#if record.thumbnail}}
+    <img src="{{record.thumbnail}}" alt="Property Image" 
+         style="max-width:400px; border-radius:10px; margin-top:1rem;">
+  {{/if}}
+</div>
