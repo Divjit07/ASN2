@@ -90,7 +90,8 @@ async function getData() {
     return cachedData;
   } catch (err) {
     console.error("JSON load error:", err);
-    return [];
+    // Return the error so we can display it
+    return { error: err.message, path: path.join(process.cwd(), "data", "airbnb_small.json") };
   }
 }
 
@@ -166,6 +167,17 @@ app.post(
 // ===== STEP 8 – VIEW DATA =====
 app.get("/viewData", async (req, res) => {
   const data = await getData();
+
+  // Check for load error
+  if (data && data.error) {
+    return res.status(500).send(`
+      <h1>Data Load Error</h1>
+      <p>Error: ${data.error}</p>
+      <p>Path attempted: ${data.path}</p>
+      <p>Current Directory: ${process.cwd()}</p>
+    `);
+  }
+
   console.log("Accessing /viewData. Records available:", data.length);
   res.render("viewData", {
     title: "View All Airbnb Data",
