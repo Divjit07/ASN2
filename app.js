@@ -52,7 +52,7 @@ async function getData() {
   }
 
   try {
-    const filePath = path.join(process.cwd(), "data", "airbnb_small.json");
+    const filePath = path.join(process.cwd(), "data", "airbnb_data.json");
     const raw = await fs.promises.readFile(filePath, "utf8");
     const json = JSON.parse(raw);
 
@@ -91,7 +91,7 @@ async function getData() {
   } catch (err) {
     console.error("JSON load error:", err);
     // Return the error so we can display it
-    return { error: err.message, path: path.join(process.cwd(), "data", "airbnb_small.json") };
+    return { error: err.message, path: path.join(process.cwd(), "data", "airbnb_data.json") };
   }
 }
 
@@ -236,7 +236,7 @@ app.get("/debug", async (req, res) => {
     files = ["Error reading dir: " + e.message];
   }
 
-  const filePath = path.join(dataDir, "airbnb_small.json");
+  const filePath = path.join(dataDir, "airbnb_data.json");
   let fileStats = "File not found";
   try {
     const stats = await fs.promises.stat(filePath);
@@ -250,7 +250,7 @@ app.get("/debug", async (req, res) => {
     <p>CWD: ${process.cwd()}</p>
     <p>Data Dir: ${dataDir}</p>
     <p>Files in Data Dir: ${JSON.stringify(files)}</p>
-    <p>airbnb_small.json Stats: ${fileStats}</p>
+    <p>airbnb_data.json Stats: ${fileStats}</p>
     <p>Cached Data Length: ${cachedData ? cachedData.length : "null"}</p>
   `);
 });
