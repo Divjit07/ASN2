@@ -105,6 +105,11 @@ app.get("/", (req, res) => {
   res.render("index", { title: "Express" });
 });
 
+// Users
+app.get("/users", (req, res) => {
+  res.render("users", { title: "Users" });
+});
+
 // About (Resume embed)
 app.get("/about", (req, res) => {
   const filePath = path.join(process.cwd(), "public", "html", "Resume.html");
